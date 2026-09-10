@@ -74,6 +74,7 @@
     CZ: ["Tchéquie"],
     MK: ["Macédoine du Nord"],
     BY: ["Belarus"],
+    BA: ["Bosnie"],
   };
 
   // A name like "Myanmar (Birmanie)" should accept either "Myanmar" or

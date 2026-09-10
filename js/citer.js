@@ -52,6 +52,7 @@
     CZ: ["Tchéquie"],
     MK: ["Macédoine du Nord"],
     BY: ["Belarus"],
+    BA: ["Bosnie"],
   };
 
   function acceptedAnswers(name, extra = []) {
