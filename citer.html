@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citer tous les pays - Learn Geography</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page page--game">
+  <header class="game-header">
+    <a class="back-link" href="index.html">Menu</a>
+    <div class="score-board">
+      <div class="score-col">
+        <span class="score-item">Trouvés <strong id="found-count">0</strong>/<span id="total-count">0</span></span>
+        <span class="score-item"><span id="timer-label">Temps</span> <strong id="timer">0:00</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <div id="game-area">
+    <form id="answer-form" class="answer-form" autocomplete="off">
+      <input id="answer-input" class="answer-input" type="text" placeholder="Nom d'un pays…" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button type="submit" class="btn">Valider</button>
+    </form>
+    <div id="feedback" class="feedback" aria-live="polite"></div>
+
+    <div class="map-wrap" id="map-wrap">
+      <div class="map-controls">
+        <button id="zoom-in-btn" class="zoom-btn" title="Zoomer" aria-label="Zoomer">+</button>
+        <button id="zoom-out-btn" class="zoom-btn" title="Dézoomer" aria-label="Dézoomer">−</button>
+        <button id="zoom-reset-btn" class="zoom-btn zoom-btn--reset" title="Réinitialiser la vue" aria-label="Réinitialiser la vue">Réinitialiser</button>
+      </div>
+      <svg id="map" viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Carte du monde"></svg>
+    </div>
+
+    <div class="controls">
+      <button id="finish-btn" class="btn btn--ghost" type="button">Terminer</button>
+    </div>
+  </div>
+
+  <div id="summary" class="summary summary--wide" hidden>
+    <h2>Partie terminée</h2>
+    <p id="summary-text"></p>
+    <div class="results-table" id="results-table"></div>
+    <div class="summary-actions">
+      <a class="btn btn--ghost" href="index.html">Retour au menu</a>
+      <button id="restart-btn" class="btn" type="button">Rejouer</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/world-map-data.js"></script>
+<script src="js/options.js"></script>
+<script src="js/map-zoom.js"></script>
+<script src="js/citer.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trouver le nom du pays - Learn Geography</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page page--game">
+  <header class="game-header">
+    <a class="back-link" href="index.html">Menu</a>
+    <div class="score-board">
+      <div class="score-col">
+        <span class="score-item">Pays <strong id="progress-current">0</strong>/<span id="progress-total">0</span></span>
+        <span class="score-item">Temps <strong id="timer">0:00</strong></span>
+      </div>
+      <span class="score-item">Erreurs <strong id="errors">0</strong></span>
+    </div>
+  </header>
+
+  <div id="game-area">
+    <div class="prompt-bar">
+      <p class="prompt-label" id="prompt-label">Trouve le nom de ce pays</p>
+      <div class="prompt-target">
+        <img id="target-flag" class="target-flag" alt="" hidden>
+        <h2 id="target-capital"></h2>
+      </div>
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+    </div>
+
+    <div class="map-wrap" id="map-wrap">
+      <div class="map-controls">
+        <button id="zoom-in-btn" class="zoom-btn" title="Zoomer" aria-label="Zoomer">+</button>
+        <button id="zoom-out-btn" class="zoom-btn" title="Dézoomer" aria-label="Dézoomer">−</button>
+        <button id="zoom-reset-btn" class="zoom-btn zoom-btn--reset" title="Réinitialiser la vue" aria-label="Réinitialiser la vue">Réinitialiser</button>
+      </div>
+      <svg id="map" viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Carte du monde"></svg>
+    </div>
+
+    <form id="answer-form" class="answer-form" autocomplete="off">
+      <input id="answer-input" class="answer-input" type="text" placeholder="Nom du pays…" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button type="submit" class="btn">Valider</button>
+    </form>
+
+    <div class="below-map-controls">
+      <span class="below-map-controls-label">Passer</span>
+      <button id="skip-btn" class="icon-btn" title="Passer ce pays (repoussé en fin de liste)" aria-label="Passer ce pays">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 4 15 12 5 20 5 4"></polygon>
+          <line x1="19" y1="5" x2="19" y2="19"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="summary" class="summary" hidden>
+    <h2>Partie terminée</h2>
+    <p id="summary-text"></p>
+    <div class="summary-actions">
+      <a class="btn btn--ghost" href="index.html">Retour au menu</a>
+      <button id="review-btn" class="btn">Revoir mes erreurs</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/world-map-data.js"></script>
+<script src="js/options.js"></script>
+<script src="js/map-zoom.js"></script>
+<script src="js/trouver.js"></script>
+</body>
+</html>

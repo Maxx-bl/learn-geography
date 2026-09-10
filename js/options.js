@@ -16,4 +16,20 @@ window.GameOptions = {
       // ignore (private browsing, storage disabled, etc.)
     }
   },
+  getNumber(key, defaultValue) {
+    try {
+      const v = localStorage.getItem("opt_" + key);
+      const n = v === null ? NaN : Number(v);
+      return Number.isFinite(n) ? n : defaultValue;
+    } catch (e) {
+      return defaultValue;
+    }
+  },
+  setNumber(key, value) {
+    try {
+      localStorage.setItem("opt_" + key, String(value));
+    } catch (e) {
+      // ignore (private browsing, storage disabled, etc.)
+    }
+  },
 };

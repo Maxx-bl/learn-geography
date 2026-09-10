@@ -19,6 +19,12 @@
 
 * { box-sizing: border-box; }
 
+/* The hidden attribute must always win, even over elements whose own class
+   (e.g. .btn's display:inline-block) would otherwise override the browser's
+   default [hidden]{display:none} - that's what let the "Revoir mes erreurs"
+   button stay visible despite el.hidden being correctly set to true. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -75,6 +81,58 @@ body {
   margin: 0;
   font-size: 1.3rem;
   font-weight: 600;
+}
+
+
+.capital-toggle {
+  position: relative;
+  display: inline-flex;
+  margin-top: 14px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.capital-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.capital-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  background: var(--accent);
+  border-radius: 999px;
+  transition: transform 0.18s ease;
+}
+
+.capital-toggle input:checked ~ .capital-toggle-thumb {
+  transform: translateX(100%);
+}
+
+.capital-toggle-option {
+  position: relative;
+  z-index: 1;
+  min-width: 62px;
+  text-align: center;
+  padding: 5px 8px;
+  color: var(--text-dim);
+  transition: color 0.15s ease;
+}
+
+.capital-toggle input:not(:checked) ~ .capital-toggle-option--pays,
+.capital-toggle input:checked ~ .capital-toggle-option--capitale {
+  color: white;
 }
 
 .mode-play-buttons {
@@ -159,6 +217,24 @@ body {
   outline-offset: 2px;
 }
 
+.option-row--disabled {
+  opacity: 0.45;
+}
+
+.minutes-input {
+  width: 64px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.minutes-input:disabled {
+  cursor: not-allowed;
+}
+
 .site-footer {
   text-align: center;
   color: var(--text-dim);
@@ -235,7 +311,8 @@ body {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
-#target-country {
+#target-country,
+#target-capital {
   margin: 0;
   font-size: 1.9rem;
   font-weight: 600;
@@ -277,6 +354,59 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.summary--wide {
+  max-width: 900px;
+  text-align: left;
+}
+
+.summary--wide h2,
+.summary--wide p {
+  text-align: center;
+}
+
+.results-table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 0 0 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.results-col {
+  min-width: 140px;
+}
+
+.results-col h3 {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.results-col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.results-col li {
+  font-size: 0.88rem;
+}
+
+.results-col li.is-found {
+  color: var(--good);
+}
+
+.results-col li.is-missing {
+  color: var(--bad);
 }
 
 .map-wrap {
@@ -354,6 +484,13 @@ body {
   fill: var(--found) !important;
 }
 
+/* "Trouver le nom du pays" mode: the country to identify, blinking blue
+   (distinct from the red "you failed 3 times" hint used elsewhere). */
+.country.is-quiz-target {
+  fill: var(--accent) !important;
+  animation: hint-blink 1s ease-in-out infinite;
+}
+
 .country-marker {
   fill: rgba(37, 99, 235, 0.1);
   stroke: rgba(37, 99, 235, 0.55);
@@ -389,6 +526,12 @@ body {
 .country-marker.is-found {
   fill: rgba(234, 179, 8, 0.3) !important;
   stroke: var(--found) !important;
+}
+
+.country-marker.is-quiz-target {
+  fill: rgba(37, 99, 235, 0.35) !important;
+  stroke: var(--accent) !important;
+  animation: hint-blink 1s ease-in-out infinite;
 }
 
 .country-marker.is-target:hover {
@@ -429,6 +572,33 @@ body {
   padding: 0 10px;
   font-size: 0.78rem;
   font-weight: 500;
+}
+
+.answer-form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.answer-input {
+  width: 100%;
+  max-width: 320px;
+  padding: 11px 16px;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.answer-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.answer-input:disabled {
+  opacity: 0.6;
 }
 
 .below-map-controls {
@@ -522,7 +692,7 @@ body {
 }
 
 @media (max-width: 600px) {
-  #target-country { font-size: 1.4rem; }
+  #target-country, #target-capital { font-size: 1.4rem; }
   .target-flag { height: 1.8rem; }
   .score-board { flex-direction: column; gap: 4px; align-items: flex-end; }
 }

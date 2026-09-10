@@ -21,6 +21,7 @@ class MapZoom {
     this.moved = false;
     this.pinchStartDist = null;
     this.pinchStartView = null;
+    this._animFrame = null;
     this._bind();
     this._apply();
   }
@@ -28,6 +29,56 @@ class MapZoom {
   _apply() {
     const { x, y, w, h } = this.view;
     this.svg.setAttribute("viewBox", `${x} ${y} ${w} ${h}`);
+  }
+
+  _cancelAnim() {
+    if (this._animFrame) {
+      cancelAnimationFrame(this._animFrame);
+      this._animFrame = null;
+    }
+  }
+
+  // Smoothly tweens the viewBox to the given {x,y,w,h}, e.g. to pan/zoom onto
+  // a quiz target rather than snapping there instantly.
+  animateTo(targetView, duration = 700) {
+    this._cancelAnim();
+    const target = this._clampView(targetView);
+    const start = { ...this.view };
+    const startTime = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      this.view = {
+        x: start.x + (target.x - start.x) * eased,
+        y: start.y + (target.y - start.y) * eased,
+        w: start.w + (target.w - start.w) * eased,
+        h: start.h + (target.h - start.h) * eased,
+      };
+      this._apply();
+      this._animFrame = t < 1 ? requestAnimationFrame(step) : null;
+    };
+    this._animFrame = requestAnimationFrame(step);
+  }
+
+  // Animates the view to fit the given SVG-space bounding box (e.g. a
+  // country's path.getBBox()), padded and cropped to the map's aspect ratio.
+  zoomToBBox(bbox, { padding = 2.2, duration = 700 } = {}) {
+    const aspect = this.base.w / this.base.h;
+    let w = bbox.width * (1 + padding * 2);
+    let h = bbox.height * (1 + padding * 2);
+    if (w / h > aspect) {
+      h = w / aspect;
+    } else {
+      w = h * aspect;
+    }
+    const minW = this.base.w / 8;
+    if (w < minW) {
+      w = minW;
+      h = w / aspect;
+    }
+    const cx = bbox.x + bbox.width / 2;
+    const cy = bbox.y + bbox.height / 2;
+    this.animateTo({ x: cx - w / 2, y: cy - h / 2, w, h }, duration);
   }
 
   _clientToSvg(clientX, clientY) {
@@ -51,6 +102,7 @@ class MapZoom {
   }
 
   zoomAt(clientX, clientY, factor) {
+    this._cancelAnim();
     const { x: cx, y: cy } = this._clientToSvg(clientX, clientY);
     const minW = this.base.w / this.maxScale;
     const maxW = this.base.w / this.minScale;
@@ -64,6 +116,7 @@ class MapZoom {
   }
 
   panBy(dxClient, dyClient) {
+    this._cancelAnim();
     const rect = this.svg.getBoundingClientRect();
     const dx = dxClient * (this.view.w / rect.width);
     const dy = dyClient * (this.view.h / rect.height);
@@ -82,6 +135,7 @@ class MapZoom {
   }
 
   reset() {
+    this._cancelAnim();
     this.view = { ...this.defaultView };
     this._apply();
   }

@@ -16,15 +16,16 @@
     <section class="mode-section">
       <div class="mode-section-head">
         <h2>Placer le pays sur la carte</h2>
+        <a class="btn" id="play-btn-1" href="placer.html">Jouer</a>
       </div>
-      <div class="mode-play-buttons">
-        <a class="btn btn--small" href="placer.html">Monde</a>
-        <a class="btn btn--small btn--ghost" href="placer.html?continent=europe">Europe</a>
-        <a class="btn btn--small btn--ghost" href="placer.html?continent=afrique">Afrique</a>
-        <a class="btn btn--small btn--ghost" href="placer.html?continent=asie">Asie</a>
-        <a class="btn btn--small btn--ghost" href="placer.html?continent=amerique-nord">Amérique du Nord</a>
-        <a class="btn btn--small btn--ghost" href="placer.html?continent=amerique-sud">Amérique du Sud</a>
-        <a class="btn btn--small btn--ghost" href="placer.html?continent=oceanie">Océanie</a>
+      <div class="mode-play-buttons" data-play-btn="play-btn-1" data-base-href="placer.html">
+        <button type="button" class="btn btn--small is-selected" data-continent="">Monde</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="europe">Europe</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="afrique">Afrique</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="asie">Asie</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-nord">Amérique du Nord</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-sud">Amérique du Sud</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="oceanie">Océanie</button>
       </div>
       <div class="mode-options">
         <div class="option-row">
@@ -60,11 +61,82 @@
 
     <section class="mode-section">
       <div class="mode-section-head">
-        <h2>Trouver le nom du pays</h2>
-        <span class="btn btn--disabled">Bientôt disponible</span>
+        <h2 id="mode2-title">Trouver le nom du pays</h2>
+        <a class="btn" id="play-btn-2" href="trouver.html">Jouer</a>
+      </div>
+      <label class="capital-toggle" for="capital-mode-checkbox">
+        <input type="checkbox" id="capital-mode-checkbox">
+        <span class="capital-toggle-thumb"></span>
+        <span class="capital-toggle-option capital-toggle-option--pays">Pays</span>
+        <span class="capital-toggle-option capital-toggle-option--capitale">Capitale</span>
+      </label>
+      <div class="mode-play-buttons" data-play-btn="play-btn-2" data-base-href="trouver.html">
+        <button type="button" class="btn btn--small is-selected" data-continent="">Monde</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="europe">Europe</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="afrique">Afrique</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="asie">Asie</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-nord">Amérique du Nord</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-sud">Amérique du Sud</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="oceanie">Océanie</button>
       </div>
       <div class="mode-options">
-        <p class="mode-options-placeholder">Options à venir</p>
+        <div class="option-row">
+          <label class="option-label" for="opt-show-found-2">Afficher les pays trouvés</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-found-2" data-option="showFoundCountries2" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="option-label" for="opt-show-map">Afficher la carte</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-map" data-option="showMap" data-option-group="visibility" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="option-label" for="opt-show-flag-2">Afficher le drapeau du pays</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-flag-2" data-option="showFlag2" data-option-group="visibility" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="option-label" id="opt-show-capital-2-label" for="opt-show-capital-2">Afficher la capitale</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-capital-2" data-option="showCapital2" data-option-group="visibility" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="mode-section">
+      <div class="mode-section-head">
+        <h2>Citer tous les pays</h2>
+        <a class="btn" id="play-btn-3" href="citer.html">Jouer</a>
+      </div>
+      <div class="mode-play-buttons" data-play-btn="play-btn-3" data-base-href="citer.html">
+        <button type="button" class="btn btn--small is-selected" data-continent="">Monde</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="europe">Europe</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="afrique">Afrique</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="asie">Asie</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-nord">Amérique du Nord</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-sud">Amérique du Sud</button>
+        <button type="button" class="btn btn--small btn--ghost" data-continent="oceanie">Océanie</button>
+      </div>
+      <div class="mode-options">
+        <div class="option-row">
+          <label class="option-label" for="opt-countdown">Compte à rebours</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-countdown" data-option="countdownMode3" data-option-default="false">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-row" id="countdown-minutes-row">
+          <label class="option-label" for="opt-countdown-minutes">Durée (minutes)</label>
+          <input type="number" id="opt-countdown-minutes" class="minutes-input" min="1" max="180" step="1" value="15">
+        </div>
       </div>
     </section>
   </main>
@@ -76,29 +148,108 @@
 
 <script src="js/options.js"></script>
 <script>
-  const optionInputs = document.querySelectorAll("[data-option]");
+  // The Monde/continent buttons only pick which countries the game will use -
+  // clicking one no longer starts the game by itself. "Jouer" launches it with
+  // whatever is currently selected.
+  document.querySelectorAll(".mode-play-buttons").forEach((group) => {
+    const playBtn = document.getElementById(group.dataset.playBtn);
+    const baseHref = group.dataset.baseHref;
+    group.querySelectorAll("button[data-continent]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        group.querySelectorAll("button[data-continent]").forEach((b) => b.classList.toggle("btn--ghost", b !== btn));
+        const continent = btn.dataset.continent;
+        playBtn.href = continent ? `${baseHref}?continent=${continent}` : baseHref;
+      });
+    });
+  });
+</script>
+<script>
+  // The Pays/Capitale slider toggles whether mode 2 asks for the country's
+  // name (default) or its capital's name instead. Since the "show capital"
+  // hint would spoil the answer once the capital IS the answer, its label
+  // swaps to "show country name" - same option key, its meaning just flips
+  // with the game mode.
+  const capitalModeCheckbox = document.getElementById("capital-mode-checkbox");
+  const capitalOptionLabel = document.getElementById("opt-show-capital-2-label");
+  const mode2TitleEl = document.getElementById("mode2-title");
+  let guessCapital = window.GameOptions.get("guessCapital2", false);
+
+  function applyCapitalModeUI(active) {
+    capitalModeCheckbox.checked = active;
+    capitalOptionLabel.textContent = active ? "Afficher le nom du pays" : "Afficher la capitale";
+    mode2TitleEl.textContent = active ? "Trouver la capitale du pays" : "Trouver le nom du pays";
+  }
+
+  applyCapitalModeUI(guessCapital);
+  capitalModeCheckbox.addEventListener("change", () => {
+    guessCapital = capitalModeCheckbox.checked;
+    window.GameOptions.set("guessCapital2", guessCapital);
+    applyCapitalModeUI(guessCapital);
+  });
+</script>
+<script>
+  // Each mode has its own independent options (distinct localStorage keys) so
+  // toggling a slider in one mode never moves the other mode's sliders. This
+  // still keys everything off data-option/data-option-group generically in
+  // case the same key ever legitimately appears more than once on the page.
+  const optionInputs = [...document.querySelectorAll("[data-option]")];
+
+  function setAllWithOption(key, value) {
+    document.querySelectorAll(`[data-option="${key}"]`).forEach((el) => (el.checked = value));
+  }
+
   optionInputs.forEach((input) => {
-    input.checked = window.GameOptions.get(input.dataset.option, true);
+    const defaultValue = input.dataset.optionDefault !== "false";
+    input.checked = window.GameOptions.get(input.dataset.option, defaultValue);
   });
 
   optionInputs.forEach((input) => {
     input.addEventListener("change", () => {
+      const key = input.dataset.option;
+      const group = input.dataset.optionGroup;
       // At least one option in a group must stay on (e.g. flag/name/capital: the
       // prompt needs to show *something*). If turning this one off would leave
       // none, turn the others back on instead of refusing this toggle.
-      const group = input.dataset.optionGroup;
       if (group && !input.checked) {
-        const groupInputs = [...document.querySelectorAll(`[data-option-group="${group}"]`)];
-        const others = groupInputs.filter((el) => el !== input);
-        if (others.every((el) => !el.checked)) {
-          others.forEach((el) => {
-            el.checked = true;
-            window.GameOptions.set(el.dataset.option, true);
+        const otherKeys = [
+          ...new Set([...document.querySelectorAll(`[data-option-group="${group}"]`)].map((el) => el.dataset.option)),
+        ].filter((k) => k !== key);
+        if (otherKeys.every((k) => !window.GameOptions.get(k, true))) {
+          otherKeys.forEach((k) => {
+            window.GameOptions.set(k, true);
+            setAllWithOption(k, true);
           });
         }
       }
-      window.GameOptions.set(input.dataset.option, input.checked);
+      window.GameOptions.set(key, input.checked);
+      setAllWithOption(key, input.checked);
     });
+  });
+</script>
+<script>
+  // "Citer tous les pays": by default the timer just counts up, with no end
+  // condition besides finishing or hitting "Terminer". Turning on "Compte à
+  // rebours" switches it to a countdown of the chosen duration instead.
+  const countdownCheckbox = document.getElementById("opt-countdown");
+  const countdownMinutesInput = document.getElementById("opt-countdown-minutes");
+  const countdownMinutesRow = document.getElementById("countdown-minutes-row");
+
+  function applyCountdownUI(active) {
+    countdownMinutesInput.disabled = !active;
+    countdownMinutesRow.classList.toggle("option-row--disabled", !active);
+  }
+
+  countdownMinutesInput.value = window.GameOptions.getNumber("countdownMinutes3", 15);
+  applyCountdownUI(countdownCheckbox.checked);
+
+  countdownCheckbox.addEventListener("change", () => applyCountdownUI(countdownCheckbox.checked));
+
+  countdownMinutesInput.addEventListener("change", () => {
+    let minutes = Math.round(Number(countdownMinutesInput.value));
+    if (!Number.isFinite(minutes) || minutes < 1) minutes = 1;
+    if (minutes > 180) minutes = 180;
+    countdownMinutesInput.value = minutes;
+    window.GameOptions.setNumber("countdownMinutes3", minutes);
   });
 </script>
 </body>
