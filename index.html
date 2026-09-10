@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn Geography</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page">
+  <header class="site-header">
+    <h1>Learn Geography</h1>
+  </header>
+
+  <main class="mode-sections">
+    <section class="mode-section">
+      <div class="mode-section-head">
+        <h2>Placer le pays sur la carte</h2>
+      </div>
+      <div class="mode-play-buttons">
+        <a class="btn btn--small" href="placer.html">Monde</a>
+        <a class="btn btn--small btn--ghost" href="placer.html?continent=europe">Europe</a>
+        <a class="btn btn--small btn--ghost" href="placer.html?continent=afrique">Afrique</a>
+        <a class="btn btn--small btn--ghost" href="placer.html?continent=asie">Asie</a>
+        <a class="btn btn--small btn--ghost" href="placer.html?continent=amerique-nord">Amérique du Nord</a>
+        <a class="btn btn--small btn--ghost" href="placer.html?continent=amerique-sud">Amérique du Sud</a>
+        <a class="btn btn--small btn--ghost" href="placer.html?continent=oceanie">Océanie</a>
+      </div>
+      <div class="mode-options">
+        <div class="option-row">
+          <label class="option-label" for="opt-show-found">Afficher les pays trouvés</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-found" data-option="showFoundCountries" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="option-label" for="opt-show-flag">Afficher le drapeau du pays</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-flag" data-option="showFlag" data-option-group="prompt" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="option-label" for="opt-show-name">Afficher le nom du pays</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-name" data-option="showName" data-option-group="prompt" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="option-label" for="opt-show-capital">Afficher la capitale</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="opt-show-capital" data-option="showCapital" data-option-group="prompt" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="mode-section">
+      <div class="mode-section-head">
+        <h2>Trouver le nom du pays</h2>
+        <span class="btn btn--disabled">Bientôt disponible</span>
+      </div>
+      <div class="mode-options">
+        <p class="mode-options-placeholder">Options à venir</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>197 pays référencés</p>
+  </footer>
+</div>
+
+<script src="js/options.js"></script>
+<script>
+  const optionInputs = document.querySelectorAll("[data-option]");
+  optionInputs.forEach((input) => {
+    input.checked = window.GameOptions.get(input.dataset.option, true);
+  });
+
+  optionInputs.forEach((input) => {
+    input.addEventListener("change", () => {
+      // At least one option in a group must stay on (e.g. flag/name/capital: the
+      // prompt needs to show *something*). If turning this one off would leave
+      // none, turn the others back on instead of refusing this toggle.
+      const group = input.dataset.optionGroup;
+      if (group && !input.checked) {
+        const groupInputs = [...document.querySelectorAll(`[data-option-group="${group}"]`)];
+        const others = groupInputs.filter((el) => el !== input);
+        if (others.every((el) => !el.checked)) {
+          others.forEach((el) => {
+            el.checked = true;
+            window.GameOptions.set(el.dataset.option, true);
+          });
+        }
+      }
+      window.GameOptions.set(input.dataset.option, input.checked);
+    });
+  });
+</script>
+</body>
+</html>
