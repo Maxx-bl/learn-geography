@@ -7,9 +7,6 @@
   const progressTotalEl = document.getElementById("progress-total");
   const errorsEl = document.getElementById("errors");
   const timerEl = document.getElementById("timer");
-  const zoomInBtn = document.getElementById("zoom-in-btn");
-  const zoomOutBtn = document.getElementById("zoom-out-btn");
-  const zoomResetBtn = document.getElementById("zoom-reset-btn");
   const gameAreaEl = document.getElementById("game-area");
   const summaryEl = document.getElementById("summary");
   const summaryTextEl = document.getElementById("summary-text");
@@ -104,9 +101,6 @@
 
   const continentBounds = continent ? window.CONTINENT_BOUNDS[continent.name] : null;
   const zoom = new MapZoom(svg, { minScale: 1, maxScale: 40, initialView: continentBounds });
-  zoomInBtn.addEventListener("click", () => zoom.zoomIn());
-  zoomOutBtn.addEventListener("click", () => zoom.zoomOut());
-  zoomResetBtn.addEventListener("click", () => zoom.reset());
 
   function shuffle(arr) {
     const a = arr.slice();

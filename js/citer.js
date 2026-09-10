@@ -13,9 +13,6 @@
   const finishBtn = document.getElementById("finish-btn");
   const restartBtn = document.getElementById("restart-btn");
   const svg = document.getElementById("map");
-  const zoomInBtn = document.getElementById("zoom-in-btn");
-  const zoomOutBtn = document.getElementById("zoom-out-btn");
-  const zoomResetBtn = document.getElementById("zoom-reset-btn");
 
   const CONTINENTS = {
     europe: { name: "Europe", label: "Europe" },
@@ -134,9 +131,6 @@
 
   const continentBounds = continent ? window.CONTINENT_BOUNDS[continent.name] : null;
   const zoom = new MapZoom(svg, { minScale: 1, maxScale: 40, initialView: continentBounds });
-  zoomInBtn.addEventListener("click", () => zoom.zoomIn());
-  zoomOutBtn.addEventListener("click", () => zoom.zoomOut());
-  zoomResetBtn.addEventListener("click", () => zoom.reset());
 
   function updateCounts() {
     foundCountEl.textContent = foundIsos.size;

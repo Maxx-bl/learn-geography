@@ -8,12 +8,20 @@ class MapZoom {
   constructor(svg, { minScale = 1, maxScale = 30, initialView = null } = {}) {
     this.svg = svg;
     const [x, y, w, h] = svg.getAttribute("viewBox").split(/\s+/).map(Number);
+    // this.base is the outer pan/zoom-out bound (the full world, or the full
+    // continent extent) - it must stay the *un*cropped box, not fitted to the
+    // container's aspect ratio. this.defaultView is what's actually shown at
+    // rest, cropped to the container's aspect (e.g. full north-south extent
+    // with some east-west trimmed on a portrait phone). Keeping these two
+    // distinct is what leaves _clampView real slack to pan sideways at the
+    // default zoom - if defaultView == base, panning has nowhere to go until
+    // the user zooms in first.
     this.base = { x, y, w, h };
     // The default/"reset" view can differ from the pan/zoom clamp bounds (e.g. a
     // continent mode starts zoomed in, but can still zoom back out to the world).
-    this.defaultView = initialView
-      ? { x: initialView[0], y: initialView[1], w: initialView[2], h: initialView[3] }
-      : { ...this.base };
+    this.defaultView = this._fitToContainer(
+      initialView ? { x: initialView[0], y: initialView[1], w: initialView[2], h: initialView[3] } : this.base
+    );
     this.view = { ...this.defaultView };
     this.minScale = minScale;
     this.maxScale = maxScale;
@@ -22,8 +30,33 @@ class MapZoom {
     this.pinchStartDist = null;
     this.pinchStartView = null;
     this._animFrame = null;
+    // "slice" (crop-to-fill) instead of the default "meet" (letterbox) lets a
+    // container whose aspect ratio doesn't match the viewBox (e.g. a tall
+    // mobile map) fill its full box by auto-zooming in, rather than adding
+    // empty bars. On a container that does share the viewBox aspect (desktop)
+    // this renders identically to "meet".
+    this.svg.setAttribute("preserveAspectRatio", "xMidYMid slice");
     this._bind();
     this._apply();
+  }
+
+  // Returns the largest centered crop of `box` that shares the svg element's
+  // currently rendered aspect ratio (e.g. full north-south extent with some
+  // east-west trimmed off on a portrait phone). Falls back to `box` as-is if
+  // the element isn't laid out yet (0-size rect).
+  _fitToContainer(box) {
+    const rect = this.svg.getBoundingClientRect();
+    if (!rect.width || !rect.height) return { ...box };
+    const containerAspect = rect.width / rect.height;
+    const boxAspect = box.w / box.h;
+    let w = box.w;
+    let h = box.h;
+    if (containerAspect < boxAspect) {
+      w = box.h * containerAspect;
+    } else {
+      h = box.w / containerAspect;
+    }
+    return { x: box.x + (box.w - w) / 2, y: box.y + (box.h - h) / 2, w, h };
   }
 
   _apply() {
@@ -63,7 +96,10 @@ class MapZoom {
   // Animates the view to fit the given SVG-space bounding box (e.g. a
   // country's path.getBBox()), padded and cropped to the map's aspect ratio.
   zoomToBBox(bbox, { padding = 2.2, duration = 700 } = {}) {
-    const aspect = this.base.w / this.base.h;
+    // Match the container's own aspect (defaultView, not the uncropped
+    // base) so the padded box isn't immediately re-cropped by the "slice"
+    // preserveAspectRatio once applied.
+    const aspect = this.defaultView.w / this.defaultView.h;
     let w = bbox.width * (1 + padding * 2);
     let h = bbox.height * (1 + padding * 2);
     if (w / h > aspect) {
@@ -117,9 +153,13 @@ class MapZoom {
 
   panBy(dxClient, dyClient) {
     this._cancelAnim();
-    const rect = this.svg.getBoundingClientRect();
-    const dx = dxClient * (this.view.w / rect.width);
-    const dy = dyClient * (this.view.h / rect.height);
+    // Converts the screen-pixel delta to an svg-space delta via the CTM
+    // rather than a plain rect/view ratio, since with preserveAspectRatio
+    // "slice" the screen->svg scale can differ per axis.
+    const origin = this._clientToSvg(0, 0);
+    const moved = this._clientToSvg(dxClient, dyClient);
+    const dx = moved.x - origin.x;
+    const dy = moved.y - origin.y;
     this.view = this._clampView({ x: this.view.x - dx, y: this.view.y - dy, w: this.view.w, h: this.view.h });
     this._apply();
   }

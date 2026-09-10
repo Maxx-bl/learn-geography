@@ -245,14 +245,48 @@ body {
 /* ---------- Game ---------- */
 
 .page--game {
-  max-width: 1200px;
+  max-width: 1600px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+}
+
+/* Above the mobile breakpoint, fit the whole game screen (header, prompt,
+   map, answer form, skip button) inside one viewport height instead of
+   sizing the map off a flat vh guess - a flat guess plus the surrounding
+   chrome could add up to taller than the window, pushing controls below
+   the fold. The map is the only flexible child, so it gets whatever
+   height is left over after everything else takes its natural size. */
+@media (min-width: 601px) {
+  html, body { height: 100%; }
+
+  .page--game {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #game-area {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #game-area > * { flex: 0 0 auto; }
+
+  #game-area > .map-wrap {
+    flex: 1 1 auto;
+    min-height: 200px;
+  }
+
+  #map { height: 100%; }
 }
 
 .game-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .back-link {
@@ -420,8 +454,12 @@ body {
 #map {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 1120 / 500;
+  /* Height tracks the viewport instead of the (very wide) world viewBox's
+     own aspect ratio, so the map claims a real chunk of screen height on
+     any device. preserveAspectRatio="slice" (see map-zoom.js) auto-zooms
+     to fill this box without distorting country shapes. */
+  aspect-ratio: auto;
+  height: clamp(420px, 78vh, 820px);
   cursor: grab;
   touch-action: none;
 }
@@ -537,41 +575,6 @@ body {
 .country-marker.is-target:hover {
   fill: rgba(37, 99, 235, 0.22) !important;
   stroke: rgba(37, 99, 235, 0.55) !important;
-}
-
-.map-controls {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  z-index: 2;
-}
-
-.zoom-btn {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 8px;
-  width: 32px;
-  height: 32px;
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-}
-
-.zoom-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.zoom-btn--reset {
-  width: auto;
-  padding: 0 10px;
-  font-size: 0.78rem;
-  font-weight: 500;
 }
 
 .answer-form {
@@ -695,4 +698,16 @@ body {
   #target-country, #target-capital { font-size: 1.4rem; }
   .target-flag { height: 1.8rem; }
   .score-board { flex-direction: column; gap: 4px; align-items: flex-end; }
+
+  /* Reclaim vertical space for the map: tighter page padding and chrome... */
+  .page--game { padding: 14px 10px 24px; }
+  .game-header { margin-bottom: 10px; }
+  .prompt-bar { margin-bottom: 8px; }
+  .prompt-target { margin: 2px 0 4px; }
+  .answer-form { margin-top: 10px; }
+  .below-map-controls { margin-top: 8px; }
+
+  /* ...so the map itself can take a real chunk of the viewport height,
+     overriding the desktop clamp() above with mobile-appropriate bounds. */
+  #map { height: clamp(360px, 68vh, 640px); }
 }
