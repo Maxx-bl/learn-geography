@@ -53,6 +53,7 @@
     MK: ["Macédoine du Nord"],
     BY: ["Belarus"],
     BA: ["Bosnie"],
+    KN: ["Saint-Kitts-et-Nevis"],
   };
 
   function acceptedAnswers(name, extra = []) {
