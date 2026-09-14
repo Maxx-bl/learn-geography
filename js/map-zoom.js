@@ -140,8 +140,16 @@ class MapZoom {
   zoomAt(clientX, clientY, factor) {
     this._cancelAnim();
     const { x: cx, y: cy } = this._clientToSvg(clientX, clientY);
-    const minW = this.base.w / this.maxScale;
-    const maxW = this.base.w / this.minScale;
+    // Bounded by defaultView, not base: base is the *un*cropped full extent
+    // (wrong aspect ratio for this container), so letting w grow all the way
+    // to base.w would force h past base.h too. _clampView then clamps h but
+    // not w back down, decoupling the view's aspect from the container's -
+    // preserveAspectRatio="slice" reacts by re-cropping width on its own,
+    // and once w has crept up near base.w there's no x range left to pan
+    // through - so sliding on a mobile view could stop working entirely
+    // after zooming out past the default crop.
+    const minW = this.defaultView.w / this.maxScale;
+    const maxW = this.defaultView.w / this.minScale;
     let newW = Math.min(Math.max(this.view.w / factor, minW), maxW);
     const ratio = newW / this.view.w;
     const newH = this.view.h * ratio;
@@ -180,6 +188,59 @@ class MapZoom {
     this._apply();
   }
 
+  // Shared drag/pinch/tap state machine, driven by whichever event family a
+  // given browser actually delivers reliably (see _bind). `id` is a
+  // pointerId or a Touch.identifier - either way just an opaque per-contact
+  // key into this.pointers.
+  _dragStart(id, x, y) {
+    this.pointers.set(id, { x, y });
+    if (this.pointers.size === 2) {
+      const [a, b] = [...this.pointers.values()];
+      this.pinchStartDist = Math.hypot(a.x - b.x, a.y - b.y);
+      this.pinchStartView = { ...this.view };
+    }
+  }
+
+  _dragMove(id, x, y) {
+    if (!this.pointers.has(id)) return;
+    const prev = this.pointers.get(id);
+    const dx = x - prev.x;
+    const dy = y - prev.y;
+    this.pointers.set(id, { x, y });
+
+    if (this.pointers.size === 2) {
+      const [a, b] = [...this.pointers.values()];
+      const dist = Math.hypot(a.x - b.x, a.y - b.y);
+      if (this.pinchStartDist) {
+        const midX = (a.x + b.x) / 2;
+        const midY = (a.y + b.y) / 2;
+        this.view = { ...this.pinchStartView };
+        this._apply();
+        this.zoomAt(midX, midY, dist / this.pinchStartDist);
+      }
+      this.moved = true;
+      return;
+    }
+
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) this.moved = true;
+    if (this.moved) this.panBy(dx, dy);
+  }
+
+  _dragEnd(id, x, y) {
+    const wasSingleTap = this.pointers.size === 1 && !this.moved;
+    this.pointers.delete(id);
+    if (this.pointers.size < 2) this.pinchStartDist = null;
+
+    if (wasSingleTap) {
+      const el = document.elementFromPoint(x, y);
+      const country = el && el.closest ? el.closest(".country") : null;
+      this.svg.dispatchEvent(
+        new CustomEvent("country-click", { detail: { iso: country ? country.dataset.iso : null } })
+      );
+    }
+    if (this.pointers.size === 0) this.moved = false;
+  }
+
   _bind() {
     this.svg.addEventListener(
       "wheel",
@@ -190,57 +251,55 @@ class MapZoom {
       { passive: false }
     );
 
+    // Pointer Events cover mouse/trackpad drag on desktop. They're also the
+    // spec-correct way to handle touch, but support for them on SVG targets
+    // is unreliable on WebKit-based mobile browsers (Safari, and every iOS
+    // browser since they're all WebKit under the hood - Firefox/Chrome for
+    // iOS included): touches there can fail to ever fire pointerdown/move,
+    // leaving the map completely unpannable. So touch is handled separately
+    // below via plain Touch Events, which every mobile browser supports.
     this.svg.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "touch") return;
       this.svg.setPointerCapture(e.pointerId);
-      this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-      if (this.pointers.size === 2) {
-        const [a, b] = [...this.pointers.values()];
-        this.pinchStartDist = Math.hypot(a.x - b.x, a.y - b.y);
-        this.pinchStartView = { ...this.view };
-      }
+      this._dragStart(e.pointerId, e.clientX, e.clientY);
     });
 
     this.svg.addEventListener("pointermove", (e) => {
-      if (!this.pointers.has(e.pointerId)) return;
-      const prev = this.pointers.get(e.pointerId);
-      const dx = e.clientX - prev.x;
-      const dy = e.clientY - prev.y;
-      this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-
-      if (this.pointers.size === 2) {
-        const [a, b] = [...this.pointers.values()];
-        const dist = Math.hypot(a.x - b.x, a.y - b.y);
-        if (this.pinchStartDist) {
-          const midX = (a.x + b.x) / 2;
-          const midY = (a.y + b.y) / 2;
-          this.view = { ...this.pinchStartView };
-          this._apply();
-          this.zoomAt(midX, midY, dist / this.pinchStartDist);
-        }
-        this.moved = true;
-        return;
-      }
-
-      if (Math.abs(dx) > 2 || Math.abs(dy) > 2) this.moved = true;
-      if (this.moved) this.panBy(dx, dy);
+      if (e.pointerType === "touch") return;
+      this._dragMove(e.pointerId, e.clientX, e.clientY);
     });
 
     const onPointerUp = (e) => {
-      const wasSingleTap = this.pointers.size === 1 && !this.moved;
-      this.pointers.delete(e.pointerId);
-      if (this.pointers.size < 2) this.pinchStartDist = null;
-
-      if (wasSingleTap) {
-        const el = document.elementFromPoint(e.clientX, e.clientY);
-        const country = el && el.closest ? el.closest(".country") : null;
-        this.svg.dispatchEvent(
-          new CustomEvent("country-click", { detail: { iso: country ? country.dataset.iso : null } })
-        );
-      }
-      if (this.pointers.size === 0) this.moved = false;
+      if (e.pointerType === "touch") return;
+      this._dragEnd(e.pointerId, e.clientX, e.clientY);
     };
     this.svg.addEventListener("pointerup", onPointerUp);
     this.svg.addEventListener("pointercancel", onPointerUp);
+
+    this.svg.addEventListener(
+      "touchstart",
+      (e) => {
+        e.preventDefault();
+        for (const t of e.changedTouches) this._dragStart(t.identifier, t.clientX, t.clientY);
+      },
+      { passive: false }
+    );
+
+    this.svg.addEventListener(
+      "touchmove",
+      (e) => {
+        e.preventDefault();
+        for (const t of e.changedTouches) this._dragMove(t.identifier, t.clientX, t.clientY);
+      },
+      { passive: false }
+    );
+
+    const onTouchEnd = (e) => {
+      e.preventDefault();
+      for (const t of e.changedTouches) this._dragEnd(t.identifier, t.clientX, t.clientY);
+    };
+    this.svg.addEventListener("touchend", onTouchEnd, { passive: false });
+    this.svg.addEventListener("touchcancel", onTouchEnd, { passive: false });
 
     this.svg.addEventListener("dblclick", (e) => {
       e.preventDefault();
