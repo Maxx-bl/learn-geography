@@ -182,17 +182,66 @@ body:has(.mode-sections) {
   color: white;
 }
 
+.field-group {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.field-label {
+  margin: 0 0 10px;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .mode-play-buttons {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
   gap: 8px;
-  margin-top: 14px;
+}
+
+.continent-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 11px 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .continent-chip:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+}
+
+.continent-chip:active { transform: scale(0.97); }
+
+.continent-chip.is-selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
 }
 
 .mode-options {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
+  margin-top: 16px;
+  padding: 6px 16px 4px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
 }
 
 .mode-options-placeholder {
@@ -206,7 +255,11 @@ body:has(.mode-sections) {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 4px 0;
+  padding: 10px 0;
+}
+
+.option-row + .option-row {
+  border-top: 1px solid var(--border);
 }
 
 .option-label {
@@ -303,8 +356,12 @@ body:has(.mode-sections) {
   .mode-icon svg { width: 16px; height: 16px; }
   .mode-section-head .btn { padding: 9px 18px; font-size: 0.9rem; }
 
-  .mode-play-buttons { gap: 6px; margin-top: 12px; }
-  .btn--small { padding: 6px 12px; font-size: 0.8rem; }
+  .field-group { padding: 12px; margin-top: 12px; }
+  .field-label { font-size: 0.72rem; margin-bottom: 8px; }
+  .mode-play-buttons { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .continent-chip { padding: 9px 4px; font-size: 0.72rem; }
+
+  .mode-options { padding: 4px 12px 2px; margin-top: 12px; }
 
   .site-footer { margin-top: 32px; }
 }
@@ -738,12 +795,6 @@ body:has(.mode-sections) {
   background: var(--border);
   color: var(--text-dim);
   cursor: default;
-}
-
-.btn--small {
-  padding: 7px 14px;
-  font-size: 0.85rem;
-  border-radius: 7px;
 }
 
 .btn--ghost {

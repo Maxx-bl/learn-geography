@@ -27,14 +27,9 @@
         </h2>
         <a class="btn" id="play-btn-1" href="placer.html">Jouer</a>
       </div>
-      <div class="mode-play-buttons" data-play-btn="play-btn-1" data-base-href="placer.html">
-        <button type="button" class="btn btn--small is-selected" data-continent="">Monde</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="europe">Europe</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="afrique">Afrique</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="asie">Asie</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-nord">Amérique du Nord</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-sud">Amérique du Sud</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="oceanie">Océanie</button>
+      <div class="field-group">
+        <p class="field-label">Zone géographique</p>
+        <div class="mode-play-buttons" data-play-btn="play-btn-1" data-base-href="placer.html"></div>
       </div>
       <div class="mode-options">
         <div class="option-row">
@@ -87,14 +82,9 @@
         <span class="capital-toggle-option capital-toggle-option--pays">Pays</span>
         <span class="capital-toggle-option capital-toggle-option--capitale">Capitale</span>
       </label>
-      <div class="mode-play-buttons" data-play-btn="play-btn-2" data-base-href="trouver.html">
-        <button type="button" class="btn btn--small is-selected" data-continent="">Monde</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="europe">Europe</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="afrique">Afrique</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="asie">Asie</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-nord">Amérique du Nord</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-sud">Amérique du Sud</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="oceanie">Océanie</button>
+      <div class="field-group">
+        <p class="field-label">Zone géographique</p>
+        <div class="mode-play-buttons" data-play-btn="play-btn-2" data-base-href="trouver.html"></div>
       </div>
       <div class="mode-options">
         <div class="option-row">
@@ -145,14 +135,9 @@
         </h2>
         <a class="btn" id="play-btn-3" href="citer.html">Jouer</a>
       </div>
-      <div class="mode-play-buttons" data-play-btn="play-btn-3" data-base-href="citer.html">
-        <button type="button" class="btn btn--small is-selected" data-continent="">Monde</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="europe">Europe</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="afrique">Afrique</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="asie">Asie</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-nord">Amérique du Nord</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="amerique-sud">Amérique du Sud</button>
-        <button type="button" class="btn btn--small btn--ghost" data-continent="oceanie">Océanie</button>
+      <div class="field-group">
+        <p class="field-label">Zone géographique</p>
+        <div class="mode-play-buttons" data-play-btn="play-btn-3" data-base-href="citer.html"></div>
       </div>
       <div class="mode-options">
         <div class="option-row">
@@ -177,6 +162,26 @@
 
 <script src="js/options.js"></script>
 <script>
+  // Continent chips are generated from one shared list instead of being
+  // hand-written three times in the markup, so the three mode sections can
+  // never drift out of sync with each other.
+  const CONTINENTS = [
+    { key: "", label: "Monde" },
+    { key: "europe", label: "Europe" },
+    { key: "afrique", label: "Afrique" },
+    { key: "asie", label: "Asie" },
+    { key: "amerique-nord", label: "Amérique du Nord" },
+    { key: "amerique-sud", label: "Amérique du Sud" },
+    { key: "oceanie", label: "Océanie" },
+  ];
+
+  document.querySelectorAll(".mode-play-buttons").forEach((group) => {
+    group.innerHTML = CONTINENTS.map((c, i) => `
+      <button type="button" class="continent-chip${i === 0 ? " is-selected" : ""}" data-continent="${c.key}">${c.label}</button>
+    `).join("");
+  });
+</script>
+<script>
   // The Monde/continent buttons only pick which countries the game will use -
   // clicking one no longer starts the game by itself. "Jouer" launches it with
   // whatever is currently selected.
@@ -185,7 +190,7 @@
     const baseHref = group.dataset.baseHref;
     group.querySelectorAll("button[data-continent]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        group.querySelectorAll("button[data-continent]").forEach((b) => b.classList.toggle("btn--ghost", b !== btn));
+        group.querySelectorAll("button[data-continent]").forEach((b) => b.classList.toggle("is-selected", b === btn));
         const continent = btn.dataset.continent;
         playBtn.href = continent ? `${baseHref}?continent=${continent}` : baseHref;
       });
