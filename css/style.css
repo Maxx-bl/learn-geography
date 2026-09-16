@@ -1,19 +1,24 @@
 :root {
-  --bg: #ffffff;
-  --bg-soft: #f6f7f9;
-  --panel: #ffffff;
-  --border: #e3e5ea;
-  --text: #1a1d24;
-  --text-dim: #6b7280;
-  --accent: #2563eb;
-  --good: #1a8f5e;
-  --good-bg: #eafaf2;
-  --bad: #c2410c;
-  --bad-bg: #fdf1ea;
-  --found: #eab308;
+  --bg: #f5f1e8;
+  --bg-soft: #ece4d3;
+  --panel: #fffdf8;
+  --border: #ddd2ba;
+  --text: #26241d;
+  --text-dim: #7a7159;
+  --accent: #0d7a6c;
+  --accent-soft: #d9ece6;
+  --accent-2: #c9702c;
+  --accent-2-soft: #f6e3d2;
+  --good: #3f8f4f;
+  --good-bg: #e6f2e3;
+  --bad: #b3452e;
+  --bad-bg: #f7e4dc;
+  --found: #c99a2e;
   --water: #dfe7f0;
   --land: #64748b;
   --land-hover: #475569;
+  --shadow: 0 1px 2px rgba(60, 48, 25, 0.05), 0 8px 24px rgba(60, 48, 25, 0.07);
+  --shadow-hover: 0 4px 10px rgba(60, 48, 25, 0.07), 0 16px 32px rgba(60, 48, 25, 0.1);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -32,6 +37,16 @@ body {
   min-height: 100vh;
 }
 
+/* Home page only: a faint two-tone wash behind the header keeps the warm
+   cream palette but gives the page a touch of depth instead of a flat,
+   dead background. Game pages (.page--game) opt out. */
+body:has(.mode-sections) {
+  background:
+    radial-gradient(680px 340px at 15% -60px, var(--accent-soft), transparent 65%),
+    radial-gradient(520px 300px at 100% 0%, var(--accent-2-soft), transparent 60%),
+    var(--bg);
+}
+
 .page {
   max-width: 1100px;
   margin: 0 auto;
@@ -43,31 +58,42 @@ body {
 .site-header {
   text-align: center;
   margin-bottom: 40px;
+  padding-top: 8px;
 }
 
 .site-header h1 {
-  font-size: 2.2rem;
-  font-weight: 600;
+  font-size: 2.3rem;
+  font-weight: 700;
   margin: 0 0 8px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
   color: var(--text-dim);
   margin: 0;
+  font-size: 1rem;
 }
 
 .mode-sections {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .mode-section {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 14px;
+  padding: 26px 28px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mode-section:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: #d7dae1;
+  }
 }
 
 .mode-section-head {
@@ -75,12 +101,33 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  flex-wrap: wrap;
 }
 
 .mode-section-head h2 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mode-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.mode-icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 
@@ -240,6 +287,26 @@ body {
   color: var(--text-dim);
   margin-top: 48px;
   font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .page { padding: 24px 16px 48px; }
+  .site-header { margin-bottom: 28px; }
+  .site-header h1 { font-size: 1.7rem; }
+  .subtitle { font-size: 0.9rem; }
+
+  .mode-sections { gap: 14px; }
+  .mode-section { padding: 18px 18px 20px; border-radius: 12px; }
+  .mode-section-head { gap: 10px; }
+  .mode-section-head h2 { font-size: 1.08rem; }
+  .mode-icon { width: 30px; height: 30px; border-radius: 8px; }
+  .mode-icon svg { width: 16px; height: 16px; }
+  .mode-section-head .btn { padding: 9px 18px; font-size: 0.9rem; }
+
+  .mode-play-buttons { gap: 6px; margin-top: 12px; }
+  .btn--small { padding: 6px 12px; font-size: 0.8rem; }
+
+  .site-footer { margin-top: 32px; }
 }
 
 /* ---------- Game ---------- */
@@ -530,29 +597,29 @@ body {
 }
 
 .country-marker {
-  fill: rgba(37, 99, 235, 0.1);
-  stroke: rgba(37, 99, 235, 0.55);
+  fill: rgba(13, 122, 108, 0.1);
+  stroke: rgba(13, 122, 108, 0.55);
   stroke-width: 0.4;
   stroke-dasharray: 1 0.8;
   pointer-events: all;
 }
 
 .country-marker:hover {
-  fill: rgba(37, 99, 235, 0.22);
+  fill: rgba(13, 122, 108, 0.22);
 }
 
 .country-marker.is-correct {
-  fill: rgba(26, 143, 94, 0.3) !important;
+  fill: rgba(63, 143, 79, 0.3) !important;
   stroke: var(--good) !important;
 }
 
 .country-marker.is-wrong {
-  fill: rgba(194, 65, 12, 0.3) !important;
+  fill: rgba(179, 69, 46, 0.3) !important;
   stroke: var(--bad) !important;
 }
 
 .country-marker.is-target {
-  fill: rgba(194, 65, 12, 0.35) !important;
+  fill: rgba(179, 69, 46, 0.35) !important;
   stroke: var(--bad) !important;
   animation: hint-blink 1s ease-in-out infinite;
 }
@@ -562,19 +629,19 @@ body {
 }
 
 .country-marker.is-found {
-  fill: rgba(234, 179, 8, 0.3) !important;
+  fill: rgba(201, 154, 46, 0.3) !important;
   stroke: var(--found) !important;
 }
 
 .country-marker.is-quiz-target {
-  fill: rgba(37, 99, 235, 0.35) !important;
+  fill: rgba(13, 122, 108, 0.35) !important;
   stroke: var(--accent) !important;
   animation: hint-blink 1s ease-in-out infinite;
 }
 
 .country-marker.is-target:hover {
-  fill: rgba(37, 99, 235, 0.22) !important;
-  stroke: rgba(37, 99, 235, 0.55) !important;
+  fill: rgba(13, 122, 108, 0.22) !important;
+  stroke: rgba(13, 122, 108, 0.55) !important;
 }
 
 .answer-form {
